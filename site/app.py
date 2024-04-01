@@ -1,12 +1,11 @@
 from flask import Flask, render_template, redirect, url_for, request
 from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
 
 app = Flask(__name__)
 
 # Connessione al database MongoDB
 uri = "mongodb+srv://nosqlproject:HCvkK8yc7rrJq2sB@nosql.0cv08n7.mongodb.net/"
-client = MongoClient(uri, server_api=ServerApi('1')) #connessione a database Atlas
+client = MongoClient(uri) #connessione a database Atlas
 db = client.nosqlproject
 collection = db.books
 
