@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ libro['book_title'] }}</title>
+</head>
+<body>
+    <h1>Dettaglio del libro</h1>
+    <h2>{{ libro['book_title'] }}</h2>
+    <p class="info-title">Prezzo</p>
+    <p>€{{ libro['book_price'] }}</p>
+    <p class="info-title">Categoria</p>
+    <p>{{ libro['book_category'] }}</p>
+    <p class="info-title">Rating</p>
+    <p>{{ libro['book_rating'] }}</p>
+    <p class="info-title">Descrizione</p>
+    <p>{{ libro['book_description'] }}</p>
+    <!-- Aggiungi altri dettagli del libro qui -->
+</body>
+</html>
