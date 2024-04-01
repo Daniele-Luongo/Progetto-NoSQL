@@ -42,7 +42,10 @@ def catalogo():
 @app.route('/libro/<book_title>')
 def dettaglio_libro(book_title):
     libro = collection.find_one({'book_title': book_title})
-    return render_template('dettaglio_libro.html', libro=libro)
+    if libro == None:
+        return redirect(url_for('catalogo'))
+    else:
+        return render_template('dettaglio_libro.html', libro=libro)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
