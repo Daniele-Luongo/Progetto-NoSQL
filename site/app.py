@@ -1,13 +1,15 @@
+import os
 from flask import Flask, render_template, redirect, url_for, request
 from pymongo.mongo_client import MongoClient
+from dotenv import load_dotenv
 
 app = Flask(__name__)
+load_dotenv()
 
 # Connessione al database MongoDB
-uri = "mongodb+srv://nosqlproject:HCvkK8yc7rrJq2sB@nosql.0cv08n7.mongodb.net/"
-client = MongoClient(uri) #connessione a database Atlas
-db = client.nosqlproject
-collection = db.books
+mongo_client = MongoClient(os.getenv('MONGO_URI')) #connessione a database Atlas
+mongo_db = mongo_client.nosqlproject
+mongo_collection = mongo_db.books
 
 LIBRI_PER_PAGINA = 20
 
@@ -21,7 +23,7 @@ def catalogo():
     pagina = request.args.get('pagina', 1, type=int)
 
     # Recupera il numero totale di libri
-    num_libri = collection.count_documents({})
+    num_libri = mongo_collection.count_documents({})
 
     # Calcola il numero totale di pagine
     num_pagine = (num_libri - 1) // LIBRI_PER_PAGINA + 1
@@ -35,13 +37,13 @@ def catalogo():
     offset = (pagina - 1) * LIBRI_PER_PAGINA
 
     # Recupera i libri per la pagina attuale
-    libri_pagina = collection.find({}, {'book_title'}).sort('book_title').skip(offset).limit(LIBRI_PER_PAGINA)
+    libri_pagina = mongo_collection.find({}, {'book_title'}).sort('book_title').skip(offset).limit(LIBRI_PER_PAGINA)
 
     return render_template('lista_libri.html', libri=libri_pagina, num_pagine=num_pagine, pagina_attuale=pagina)
 
 @app.route('/libro/<book_title>')
 def dettaglio_libro(book_title):
-    libro = collection.find_one({'book_title': book_title})
+    libro = mongo_collection.find_one({'book_title': book_title})
     if libro == None:
         return redirect(url_for('catalogo'))
     else:
