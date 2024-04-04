@@ -1,4 +1,4 @@
-# MEGLIO ESEGUIRLO SOLO UNA VOLTA
+# NON ESEGUIRE LO SCRIPT
 
 import os
 from pymongo.mongo_client import MongoClient
