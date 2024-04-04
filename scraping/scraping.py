@@ -1,7 +1,10 @@
+import os
 import requests
 import pandas as pd
 from pymongo.mongo_client import MongoClient
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+load_dotenv('../.env')
 
 ratings_dict = {
     'One':1,
@@ -14,8 +17,7 @@ ratings_dict = {
 ROOT_URL = 'https://books.toscrape.com/catalogue/'
 SCRAPING_COMPLETED = False
 
-uri = "mongodb+srv://nosqlproject:HCvkK8yc7rrJq2sB@nosql.0cv08n7.mongodb.net/"
-client = MongoClient(uri) #connessione a database Atlas
+client = MongoClient(os.getenv('MONGO_URI')) #connessione a database Atlas
 db = client.nosqlproject
 db.drop_collection('books_demo') #il database viene eliminato ogni volta che il codice parte
 collection = db.books_demo

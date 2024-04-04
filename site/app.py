@@ -4,7 +4,7 @@ from pymongo.mongo_client import MongoClient
 from dotenv import load_dotenv
 
 app = Flask(__name__)
-load_dotenv()
+load_dotenv('../.env')
 
 # Connessione al database MongoDB
 mongo_client = MongoClient(os.getenv('MONGO_URI')) #connessione a database Atlas

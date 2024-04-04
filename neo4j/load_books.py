@@ -4,7 +4,7 @@ import os
 from pymongo.mongo_client import MongoClient
 from neo4j import GraphDatabase
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv('../.env')
 
 neo_uri = os.getenv('NEO4J_URI')
 neo_auth = (os.getenv('NEO4J_USERNAME'), os.getenv('NEO4J_PASSWORD'))
