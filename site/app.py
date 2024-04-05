@@ -1,24 +1,62 @@
 import os
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, flash, request, session
 from pymongo.mongo_client import MongoClient
+from neo4j import GraphDatabase
 from dotenv import load_dotenv
 
 app = Flask(__name__)
-load_dotenv('../.env')
+app.secret_key = 'progettonosql'
+load_dotenv()
 
 # Connessione al database MongoDB
 mongo_client = MongoClient(os.getenv('MONGO_URI')) #connessione a database Atlas
 mongo_db = mongo_client.nosqlproject
 mongo_collection = mongo_db.books
 
+# Connessione al database Neo4J
+neo_uri = os.getenv('NEO4J_URI')
+neo_auth = (os.getenv('NEO4J_USERNAME'), os.getenv('NEO4J_PASSWORD'))
+neo_drive = GraphDatabase.driver(neo_uri, auth=neo_auth)
+
 LIBRI_PER_PAGINA = 20
+
+def check_login(login):
+    records, summary, keys = neo_drive.execute_query(
+    "MATCH (u:USER {login: $login}) RETURN u",
+    login = login
+    )
+    if records:
+        return True
+    else:
+        return False
 
 @app.route('/')
 def index():
-    return redirect(url_for('catalogo'))
+    if 'login' in session:
+        return redirect(url_for('catalogo'))
+    else:
+        return redirect(url_for('login_page'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login_page():
+    if request.method == 'POST':
+        login = request.form['login']
+        login_valid = check_login(login)
+        if login_valid:
+            session['login'] = login
+            return redirect(url_for('catalogo'))
+        else:
+            flash('Login inesistente', 'error')
+            return redirect(url_for('login_page'))
+    return render_template('login_page.html')
 
 @app.route('/catalogo')
 def catalogo():
+    if 'login' not in session:
+        return redirect(url_for('login_page'))
+    
+    login = session['login']
+
     # Pagina attuale, predefinita a 1
     pagina = request.args.get('pagina', 1, type=int)
 
@@ -43,6 +81,11 @@ def catalogo():
 
 @app.route('/libro/<book_title>')
 def dettaglio_libro(book_title):
+    if 'login' not in session:
+        return redirect(url_for('login_page'))
+    
+    login = session['login']
+
     libro = mongo_collection.find_one({'book_title': book_title})
     if libro == None:
         return redirect(url_for('catalogo'))
