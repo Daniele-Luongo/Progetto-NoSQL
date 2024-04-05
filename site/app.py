@@ -50,6 +50,12 @@ def login_page():
             return redirect(url_for('login_page'))
     return render_template('login_page.html')
 
+@app.route('/logout')
+def logout():
+    if 'login' in session:
+        session.pop('login')
+    return redirect(url_for('login_page'))
+
 @app.route('/catalogo')
 def catalogo():
     if 'login' not in session:
