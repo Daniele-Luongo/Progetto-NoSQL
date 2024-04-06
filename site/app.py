@@ -29,6 +29,19 @@ def check_login(login):
         return True
     else:
         return False
+    
+def add_book_visit(login, book_title):
+    neo_drive.execute_query(
+        """
+        MATCH (u:USER {login:$login}), (b:BOOK {titolo:$book_title})
+        MERGE (u)-[v:VISITA]->(b)
+        ON CREATE SET v.volte = 1
+        ON MATCH SET v.volte = v.volte + 1
+        SET v.ultima_visita = TIMESTAMP()
+        """,
+        login = login,
+        book_title = book_title
+    )
 
 @app.route('/')
 def index():
@@ -54,6 +67,8 @@ def login_page():
 def logout():
     if 'login' in session:
         session.pop('login')
+    if 'ultimo_libro_visitato' in session:
+        session.pop('ultimo_libro_visitato')
     return redirect(url_for('login_page'))
 
 @app.route('/catalogo')
@@ -96,6 +111,9 @@ def dettaglio_libro(book_title):
     if libro == None:
         return redirect(url_for('catalogo'))
     else:
+        if session.get('ultimo_libro_visitato', None) != book_title:
+            add_book_visit(login, book_title)
+        session['ultimo_libro_visitato'] = book_title
         return render_template('dettaglio_libro.html', libro=libro)
 
 if __name__ == '__main__':
