@@ -8,6 +8,7 @@
 </head>
 <body>
     <h1>Catalogo - pagina {{ pagina_attuale }}</h1>
+    <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
     <ul>
         {% for libro in libri %}
             <li><a href="{{ url_for('dettaglio_libro', book_title=libro['book_title']) }}">{{ libro['book_title'] }}</a></li>

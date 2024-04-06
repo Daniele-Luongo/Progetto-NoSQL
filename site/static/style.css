@@ -55,3 +55,9 @@ li {
     padding-bottom: 5px;
     margin-bottom: 10px;
 }
+
+.logout-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
