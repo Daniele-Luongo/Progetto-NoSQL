@@ -2,6 +2,7 @@ import os
 from flask import Flask, render_template, redirect, url_for, flash, request, session
 from pymongo.mongo_client import MongoClient
 from neo4j import GraphDatabase
+from datetime import datetime
 from dotenv import load_dotenv
 
 app = Flask(__name__)
@@ -42,6 +43,30 @@ def add_book_visit(login, book_title):
         login = login,
         book_title = book_title
     )
+
+def get_book_visits(login, book_title):
+    records, summary, keys = neo_drive.execute_query(
+    """
+    MATCH (u:USER {login:$login}) -[v:VISITA]-> (b:BOOK {titolo:$titolo})
+    RETURN v.volte, v.ultima_visita
+    """,
+    login = login,
+    titolo = book_title
+    )
+    if not records:
+        visite = 0
+        ultima_visita = 0
+    else:
+        if records[0]['v.volte'] == None:
+            visite = 0
+        else:
+            visite = records[0]['v.volte']
+        if records[0]['v.ultima_visita'] == None:
+            ultima_visita = 0
+        else:
+            stamp = records[0]['v.ultima_visita'] / 1000
+            ultima_visita = datetime.fromtimestamp(stamp).strftime('%d-%m-%Y')
+    return visite, ultima_visita
 
 @app.route('/')
 def index():
@@ -111,10 +136,11 @@ def dettaglio_libro(book_title):
     if libro == None:
         return redirect(url_for('catalogo'))
     else:
+        visite, ultima_visita = get_book_visits(login, book_title)
         if session.get('ultimo_libro_visitato', None) != book_title:
             add_book_visit(login, book_title)
         session['ultimo_libro_visitato'] = book_title
-        return render_template('dettaglio_libro.html', libro=libro)
+        return render_template('dettaglio_libro.html', libro=libro, visite=visite, ultima_visita=ultima_visita)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

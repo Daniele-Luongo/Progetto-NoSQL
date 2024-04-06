@@ -9,6 +9,10 @@
 <body>
     <h1>Dettaglio del libro</h1>
     <h2>{{ libro['book_title'] }}</h2>
+    <p>Hai visitato questo libro {{ visite }} volte</p>
+    {% if ultima_visita != 0 %}
+        <p>Ultima visita in data {{ ultima_visita }}</p>
+    {% endif %}
     <p class="info-title">Prezzo</p>
     <p>€{{ libro['book_price'] }}</p>
     <p class="info-title">Categoria</p>
