@@ -67,21 +67,31 @@
             <div class="mt-4 pt-2 col-lg-12">
                 <nav aria-label="Page navigation example">
                     <div class="pagination job-pagination mb-0 justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" tabindex="-1" href="#"><i class="mdi mdi-chevron-double-left fs-15"></i></a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">4</a></li>
-                        <li class="page-item"><a class="page-link" href="#">4</a></li>
-                        <li class="page-item"><a class="page-link" href="#">5</a></li>
-                        <li class="page-item"><a class="page-link" href="#">6</a></li>
-                        <li class="page-item"><a class="page-link" href="#">7</a></li>
-                        <li class="page-item"><a class="page-link" href="#">8</a></li>
-                        <li class="page-item"><a class="page-link" href="#">9</a></li>
-                            <a class="page-link" href="#"><i class="mdi mdi-chevron-double-right fs-15"></i></a>
-                        </li>
+                        {% if prima_pagina_gruppo - 1 < 1 %}
+                            <li class="page-item disabled">
+                                <a class="page-link" tabindex="-1" href="#"><i class="mdi mdi-chevron-double-left fs-15"></i></a>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('catalogo', pagina=prima_pagina_gruppo-1) }}"><i class="mdi mdi-chevron-double-left fs-15"></i></a>
+                            </li>
+                        {% endif %}
+                        {% for pagina in range(prima_pagina_gruppo, prima_pagina_gruppo + pagine_per_pagina) %}
+                            {% if pagina == pagina_attuale %}
+                                <li class="page-item active"><a class="page-link" href="#">{{ pagina }}</a></li>
+                            {% elif pagina <= num_pagine %}
+                                <li class="page-item"><a class="page-link" href="{{ url_for('catalogo', pagina=pagina) }}">{{ pagina }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if prima_pagina_gruppo + pagine_per_pagina > num_pagine %}
+                            <li class="page-item disabled">
+                                <a class="page-link" tabindex="-1" href="#"><i class="mdi mdi-chevron-double-right fs-15"></i></a>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('catalogo', pagina=prima_pagina_gruppo+pagine_per_pagina) }}"><i class="mdi mdi-chevron-double-right fs-15"></i></a>
+                            </li>
+                        {% endif %}
                     </div>
                 </nav>
             </div>
