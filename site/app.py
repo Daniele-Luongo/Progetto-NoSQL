@@ -20,6 +20,7 @@ neo_auth = (os.getenv('NEO4J_USERNAME'), os.getenv('NEO4J_PASSWORD'))
 neo_drive = GraphDatabase.driver(neo_uri, auth=neo_auth)
 
 LIBRI_PER_PAGINA = 20
+PAGINE_PER_PAGINA = 10
 
 def check_login(login):
     records, summary, keys = neo_drive.execute_query(
@@ -117,13 +118,21 @@ def catalogo():
     elif pagina <= 0:
         pagina = 1
 
+    # Calcola il numero di gruppo di pagine in cui si trova la pagina attuale
+    gruppo_pagina_attuale = (pagina - 1) // PAGINE_PER_PAGINA + 1
+
+    # Determina la prima pagina da mostrare per il gruppo corrente
+    prima_pagina_gruppo = (gruppo_pagina_attuale - 1) * PAGINE_PER_PAGINA + 1
+
     # Calcola l'offset in base alla pagina attuale
     offset = (pagina - 1) * LIBRI_PER_PAGINA
 
     # Recupera i libri per la pagina attuale
     libri_pagina = mongo_collection.find({}, {'book_description':0}).sort('book_title').skip(offset).limit(LIBRI_PER_PAGINA)
 
-    return render_template('lista_libri_new.html', libri=libri_pagina, num_pagine=num_pagine, pagina_attuale=pagina)
+    return render_template('lista_libri_new.html', libri=libri_pagina, num_pagine=num_pagine,
+                           pagina_attuale=pagina, prima_pagina_gruppo=prima_pagina_gruppo,
+                           pagine_per_pagina=PAGINE_PER_PAGINA)
 
 @app.route('/libro/<book_title>')
 def dettaglio_libro(book_title):
