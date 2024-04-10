@@ -121,9 +121,9 @@ def catalogo():
     offset = (pagina - 1) * LIBRI_PER_PAGINA
 
     # Recupera i libri per la pagina attuale
-    libri_pagina = mongo_collection.find({}, {'book_title'}).sort('book_title').skip(offset).limit(LIBRI_PER_PAGINA)
+    libri_pagina = mongo_collection.find({}, {'book_description':0}).sort('book_title').skip(offset).limit(LIBRI_PER_PAGINA)
 
-    return render_template('lista_libri.html', libri=libri_pagina, num_pagine=num_pagine, pagina_attuale=pagina)
+    return render_template('lista_libri_new.html', libri=libri_pagina, num_pagine=num_pagine, pagina_attuale=pagina)
 
 @app.route('/libro/<book_title>')
 def dettaglio_libro(book_title):
