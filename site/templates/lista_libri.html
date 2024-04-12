@@ -13,9 +13,15 @@
                 <div class="candidate-list-widgets mb-4">
                     <form action="#" class="">
                         <div class="g-2 row">
-                            <div class="col-lg-3">
+                            <div class="col-lg-10">
                                 <div>
                                     <a href="{{ url_for('logout') }}"><button type="button" class="btn btn-danger">Logout</button></a>
+                                </div>
+                                <br>
+                                <div class="col-lg-5">
+                                    <form action="{{ url_for('catalogo', query=query) }}" method="GET" class="text-center"></form>
+                                        <input type="search" name="query" class="form-control rounded" placeholder="Cerca un libro..." value="{{ query }}" aria-label="Search" aria-describedby="search-addon"/>
+                                    </form>
                                 </div>
                                 <br>
                                 <h6 class="fs-16 mb-0">Pagina {{ pagina_attuale }} di {{ num_pagine }}</h6>
@@ -76,14 +82,14 @@
                             </li>
                         {% else %}
                             <li class="page-item">
-                                <a class="page-link" href="{{ url_for('catalogo', pagina=prima_pagina_gruppo-1) }}"><i class="mdi mdi-chevron-double-left fs-15"></i></a>
+                                <a class="page-link" href="{{ url_for('catalogo', pagina=prima_pagina_gruppo-1, query=query) }}"><i class="mdi mdi-chevron-double-left fs-15"></i></a>
                             </li>
                         {% endif %}
                         {% for pagina in range(prima_pagina_gruppo, prima_pagina_gruppo + pagine_per_pagina) %}
                             {% if pagina == pagina_attuale %}
                                 <li class="page-item active"><a class="page-link" href="#">{{ pagina }}</a></li>
                             {% elif pagina <= num_pagine %}
-                                <li class="page-item"><a class="page-link" href="{{ url_for('catalogo', pagina=pagina) }}">{{ pagina }}</a></li>
+                                <li class="page-item"><a class="page-link" href="{{ url_for('catalogo', pagina=pagina, query=query) }}">{{ pagina }}</a></li>
                             {% endif %}
                         {% endfor %}
                         {% if prima_pagina_gruppo + pagine_per_pagina > num_pagine %}
@@ -92,7 +98,7 @@
                             </li>
                         {% else %}
                             <li class="page-item">
-                                <a class="page-link" href="{{ url_for('catalogo', pagina=prima_pagina_gruppo+pagine_per_pagina) }}"><i class="mdi mdi-chevron-double-right fs-15"></i></a>
+                                <a class="page-link" href="{{ url_for('catalogo', pagina=prima_pagina_gruppo+pagine_per_pagina, query=query) }}"><i class="mdi mdi-chevron-double-right fs-15"></i></a>
                             </li>
                         {% endif %}
                     </div>
