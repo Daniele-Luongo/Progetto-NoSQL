@@ -111,6 +111,7 @@ def catalogo():
         risultato_query = mongo_collection.find({'book_title': {'$regex': query, '$options': 'i'}}, {'book_description':0})
     else:
         risultato_query = mongo_collection.find({}, {'book_description':0})
+        query = ''
 
     # Recupera il numero totale di libri
     num_libri = risultato_query.explain()['executionStats']['nReturned']
